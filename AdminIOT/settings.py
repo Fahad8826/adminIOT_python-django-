@@ -39,8 +39,8 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     # Add your apps here
     'accounts',
-    'dashboard',
     'motors',
+    'farm',
     # Django REST Framework
     'rest_framework',
     'rest_framework.authtoken',  # Required for token authentication
