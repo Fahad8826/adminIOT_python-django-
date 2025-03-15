@@ -1,0 +1,153 @@
+<!-- templates/admin_dashboard.html -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Dashboard</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+        }
+        .header {
+            background-color: #333;
+            color: white;
+            padding: 15px 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .header h1 {
+            margin: 0;
+        }
+        .menu-btn {
+            background-color: transparent;
+            color: white;
+            border: none;
+            font-size: 24px;
+            cursor: pointer;
+            padding: 0 15px;
+        }
+        .logout-btn {
+            background-color: #f44336;
+            color: white;
+            border: none;
+            padding: 8px 16px;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+        .content {
+            padding: 20px;
+            margin-left: 0;
+            transition: margin-left 0.3s;
+        }
+        .content.shifted {
+            margin-left: 250px;
+        }
+        .dashboard-card {
+            background-color: white;
+            padding: 20px;
+            border-radius: 5px;
+            box-shadow: 0 0 10px rgba(0,0,0,0.1);
+        }
+        .drawer {
+            height: 100%;
+            width: 0;
+            position: fixed;
+            z-index: 1;
+            top: 0;
+            left: 0;
+            background-color: #f8f9fa;
+            overflow-x: hidden;
+            transition: 0.3s;
+            padding-top: 60px;
+            box-shadow: 2px 0 5px rgba(0,0,0,0.1);
+        }
+        .drawer.open {
+            width: 250px;
+        }
+        .drawer-header {
+            background-color: #333;
+            color: white;
+            position: absolute;
+            top: 0;
+            width: 100%;
+            padding: 15px 20px;
+            box-sizing: border-box;
+        }
+        .drawer-header h2 {
+            margin: 0;
+            font-size: 18px;
+        }
+        .drawer-close {
+            position: absolute;
+            top: 15px;
+            right: 15px;
+            color: white;
+            cursor: pointer;
+            font-size: 18px;
+        }
+        .drawer a {
+            padding: 15px 20px;
+            text-decoration: none;
+            font-size: 16px;
+            color: #333;
+            display: block;
+            transition: 0.3s;
+            border-bottom: 1px solid #e0e0e0;
+        }
+        .drawer a:hover {
+            background-color: #e0e0e0;
+        }
+        .drawer a i {
+            margin-right: 10px;
+        }
+    </style>
+</head>
+<body>
+    <div id="drawer" class="drawer">
+        <div class="drawer-header">
+            <h2>Navigation</h2>
+            <span class="drawer-close" onclick="toggleDrawer()">&times;</span>
+        </div>
+        <a href="#"><i>📊</i> Dashboard</a>
+        <a href="{% url 'users_managment' %}"><i>👥</i> Users</a>
+        <a href="#"><i>📝</i> Content</a>
+        <a href="#"><i>⚙️</i> Settings</a>
+        <a href="#"><i>📈</i> Analytics</a>
+    </div>
+
+    <div class="header">
+        <div style="display: flex; align-items: center;">
+            <button class="menu-btn" onclick="toggleDrawer()">☰</button>
+            <h1>Admin Dashboard</h1>
+        </div>
+        <button class="logout-btn" onclick="logout()">Logout</button>
+    </div>
+
+    <div id="content" class="content">
+        <div class="dashboard-card">
+            <h2>Welcome to the Admin Panel</h2>
+            <p>You are logged in as admin@example.com</p>
+            <p>Login successful!</p>
+        </div>
+    </div>
+
+    <script>
+        function toggleDrawer() {
+            const drawer = document.getElementById('drawer');
+            const content = document.getElementById('content');
+
+            drawer.classList.toggle('open');
+            content.classList.toggle('shifted');
+        }
+
+        function logout() {
+            localStorage.removeItem('adminToken');
+            window.location.href = '/admin-login/';
+        }
+    </script>
+</body>
+</html>
