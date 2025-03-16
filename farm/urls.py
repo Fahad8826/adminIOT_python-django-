@@ -1,19 +1,22 @@
-# urls.py
-from django.urls import path, include
-from rest_framework_nested import routers
-from . import views
+from django.urls import path
 
-router = routers.DefaultRouter()
-router.register(r'farms', views.FarmViewSet, basename='farm')
-
-farms_router = routers.NestedSimpleRouter(router, r'farms', lookup='farm')
-farms_router.register(r'motors', views.MotorViewSet, basename='farm-motors')
-
-motors_router = routers.NestedSimpleRouter(farms_router, r'motors', lookup='motor')
-motors_router.register(r'valves', views.ValveViewSet, basename='motor-valves')
+from .models import farm_management
+from .views import (
+    FarmListCreateView, FarmDetailView,
+    MotorListCreateView, MotorDetailView,
+    ValveListCreateView, ValveDetailView
+)
 
 urlpatterns = [
-    path('', include(router.urls)),
-    path('', include(farms_router.urls)),
-    path('', include(motors_router.urls)),
+    path('', FarmListCreateView.as_view(), name='farm-list'),
+    path('farms/<int:pk>/', FarmDetailView.as_view(), name='farm-detail'),
+
+    path('farms/<int:farm_id>/motors/', MotorListCreateView.as_view(), name='motor-list'),
+    path('farms/<int:farm_id>/motors/<int:pk>/', MotorDetailView.as_view(), name='motor-detail'),
+
+    path('farms/<int:farm_id>/motors/<int:motor_id>/valves/', ValveListCreateView.as_view(), name='valve-list'),
+    path('farms/<int:farm_id>/motors/<int:motor_id>/valves/<int:pk>/', ValveDetailView.as_view(), name='valve-detail'),
+
+
+    path('farm-html-CRUD/',farm_management,name='farm-managment')
 ]

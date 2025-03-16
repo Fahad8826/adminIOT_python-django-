@@ -1,6 +1,8 @@
 # models.py
 from django.db import models
 from django.conf import settings
+from django.shortcuts import render
+
 
 class Farm(models.Model):
     user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name='farms')
@@ -40,3 +42,13 @@ class Valve(models.Model):
 
     def __str__(self):
         return f"{self.name} - {self.motor.name}"
+
+
+
+
+# -----------------------------html-------------------------------
+
+def farm_management(request):
+    return render(
+        request,'farmCRUD.html'
+    )
