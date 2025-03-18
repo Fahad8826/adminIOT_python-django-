@@ -6,8 +6,7 @@ from rest_framework.permissions import IsAuthenticated
 
 class FarmListCreateView(generics.ListCreateAPIView):
     serializer_class = FarmSerializer
-    # permission_classes = [IsAuthenticated]
-
+    permission_classes = [IsAuthenticated]
 
     def get_queryset(self):
         return Farm.objects.filter(user=self.request.user)
@@ -52,5 +51,8 @@ class ValveDetailView(generics.RetrieveUpdateDestroyAPIView):
         return Valve.objects.filter(motor_id=motor_id, motor__farm__user=self.request.user)
 # -----------------------------html-------------------------------
 
-def farm_management(request, user_id=None):  # Add user_id as an optional argument
-    return render(request, 'farmCRUD.html', {'user_id': user_id})
+# def farm_management(request, user_id=None):  # Add user_id as an optional argument
+#     return render(request, 'farmCRUD.html', {'user_id': user_id})
+
+def farm_management(request):  # Add user_id as an optional argument
+    return render(request, 'farmCRUD.html', )

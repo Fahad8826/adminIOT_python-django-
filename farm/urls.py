@@ -18,5 +18,5 @@ urlpatterns = [
     path('farms/<int:farm_id>/motors/<int:motor_id>/valves/<int:pk>/', ValveDetailView.as_view(), name='valve-detail'),
 
 
-path('farm-html-CRUD/<int:user_id>/', farm_management, name='farm-management'),
+    path('farm-html-CRUD/', farm_management, name='farm-management'),
 ]
