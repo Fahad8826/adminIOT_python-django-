@@ -46,9 +46,3 @@ class Valve(models.Model):
 
 
 
-# -----------------------------html-------------------------------
-
-def farm_management(request):
-    return render(
-        request,'farmCRUD.html'
-    )

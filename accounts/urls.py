@@ -16,7 +16,7 @@ urlpatterns = [
     path('users/', UserListCreateView.as_view(), name='user-list'),
     path('users/<int:pk>/', UserRetrieveUpdateDestroyView.as_view(), name='user-detail'),
     path('api-token-auth/', obtain_auth_token, name='api-token-auth'),
-    path('users_managment/',user_management_ui,name='users_managment')
+    path('users_managment/',user_management_ui,name='users_managment'),
 
 
 ]

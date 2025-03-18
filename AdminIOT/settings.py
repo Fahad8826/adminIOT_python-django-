@@ -51,9 +51,12 @@ REST_FRAMEWORK = {
     'DEFAULT_AUTHENTICATION_CLASSES': [
         'rest_framework.authentication.TokenAuthentication',  # Token authentication
         'rest_framework.authentication.SessionAuthentication',  # Session authentication
-        'rest_framework_simplejwt.authentication.JWTAuthentication',  # JWT authentication (if needed)
+    ],
+    'DEFAULT_PERMISSION_CLASSES': [
+        'rest_framework.permissions.AllowAny',  # Allows access to all users
     ],
 }
+
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',

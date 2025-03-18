@@ -174,570 +174,332 @@
 
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/js/bootstrap.bundle.min.js"></script>
-<!--    <script>-->
-<!--        // Global variables-->
-<!--        let currentUserId = null;-->
-<!--        const userModal = new bootstrap.Modal(document.getElementById('userModal'));-->
-<!--        const confirmModal = new bootstrap.Modal(document.getElementById('confirmModal'));-->
-<!--        const notificationToast = new bootstrap.Toast(document.getElementById('notificationToast'));-->
+    <script>
+        // Global variables
+        let currentUserId = null;
+        const userModal = new bootstrap.Modal(document.getElementById('userModal'));
+        const confirmModal = new bootstrap.Modal(document.getElementById('confirmModal'));
+        const notificationToast = new bootstrap.Toast(document.getElementById('notificationToast'));
 
-<!--        // Show notification-->
-<!--        function showNotification(title, message, type = 'success') {-->
-<!--            const toastTitle = document.getElementById('toastTitle');-->
-<!--            const toastMessage = document.getElementById('toastMessage');-->
-<!--            const toastElement = document.getElementById('notificationToast');-->
+        // Show notification
+        function showNotification(title, message, type = 'success') {
+            const toastTitle = document.getElementById('toastTitle');
+            const toastMessage = document.getElementById('toastMessage');
+            const toastElement = document.getElementById('notificationToast');
 
-<!--            toastTitle.textContent = title;-->
-<!--            toastMessage.textContent = message;-->
+            toastTitle.textContent = title;
+            toastMessage.textContent = message;
 
-<!--            // Reset classes-->
-<!--            toastElement.className = 'toast';-->
-<!--            toastElement.classList.add(type === 'success' ? 'bg-success' : 'bg-danger', 'text-white');-->
+            // Reset classes
+            toastElement.className = 'toast';
+            toastElement.classList.add(type === 'success' ? 'bg-success' : 'bg-danger', 'text-white');
 
-<!--            notificationToast.show();-->
-<!--        }-->
+            notificationToast.show();
+        }
 
-<!--        // Get CSRF token-->
-<!--        function getCsrfToken() {-->
-<!--            const cookieValue = document.cookie-->
-<!--                .split('; ')-->
-<!--                .find(row => row.startsWith('csrftoken='))-->
-<!--                ?.split('=')[1];-->
-<!--            return cookieValue;-->
-<!--        }-->
+        // Get CSRF token
+        function getCsrfToken() {
+            const cookieValue = document.cookie
+                .split('; ')
+                .find(row => row.startsWith('csrftoken='))
+                ?.split('=')[1];
+            return cookieValue;
+        }
 
-<!--        // Fetch all users-->
-<!--        function fetchUsers() {-->
-<!--            $('#loadingIndicator').show();-->
-<!--            $.ajax({-->
-<!--                url: '/users/',-->
-<!--                type: 'GET',-->
-<!--                dataType: 'json',-->
-<!--                success: function(data) {-->
-<!--                    renderUserTable(data);-->
-<!--                    $('#loadingIndicator').hide();-->
-<!--                },-->
-<!--                error: function(xhr) {-->
-<!--                    $('#loadingIndicator').hide();-->
-<!--                    showNotification('Error', 'Failed to load users: ' + xhr.statusText, 'danger');-->
-<!--                }-->
-<!--            });-->
-<!--        }-->
-
-<!--        // Render user table-->
-<!--        function renderUserTable(users) {-->
-<!--            const userTable = document.getElementById('userTable');-->
-<!--            userTable.innerHTML = '';-->
-
-<!--            users.forEach(user => {-->
-<!--                const row = document.createElement('tr');-->
-<!--                row.className = 'user-row';-->
-<!--                row.innerHTML = `-->
-<!--                    <td>${user.id}</td>-->
-<!--                    <td>${user.username}</td>-->
-<!--                    <td>${user.email}</td>-->
-<!--                    <td>${user.first_name || ''}</td>-->
-<!--                    <td>${user.last_name || ''}</td>-->
-<!--                    <td>${user.role || 'N/A'}</td>-->
-<!--                    <td>-->
-<!--                        <span class="badge ${user.is_active ? 'bg-success' : 'bg-secondary'}">-->
-<!--                            ${user.is_active ? 'Active' : 'Inactive'}-->
-<!--                        </span>-->
-<!--                    </td>-->
-<!--                    <td>-->
-<!--                        <button class="btn btn-sm btn-primary edit-user" data-id="${user.id}">Edit</button>-->
-<!--                        <button class="btn btn-sm btn-danger delete-user" data-id="${user.id}">Delete</button>-->
-<!--                        <button class="btn btn-sm btn-success create-farm" data-id="${user.id}">Create Farm</button>-->
-
-<!--                    </td>-->
-<!--                `;-->
-<!--                userTable.appendChild(row);-->
-<!--            });-->
-
-<!--            // Add event listeners to buttons-->
-<!--            document.querySelectorAll('.edit-user').forEach(button => {-->
-<!--                button.addEventListener('click', function(e) {-->
-<!--                    e.stopPropagation();-->
-<!--                    const userId = this.getAttribute('data-id');-->
-<!--                    fetchUserDetails(userId);-->
-<!--                });-->
-<!--            });-->
-
-<!--            document.querySelectorAll('.delete-user').forEach(button => {-->
-<!--                button.addEventListener('click', function(e) {-->
-<!--                    e.stopPropagation();-->
-<!--                    const userId = this.getAttribute('data-id');-->
-<!--                    showDeleteConfirmation(userId);-->
-<!--                });-->
-<!--            });-->
-<!--        }-->
-
-<!--        // Fetch user details for editing-->
-<!--        function fetchUserDetails(userId) {-->
-<!--            $.ajax({-->
-<!--                url: `/users/${userId}/`,-->
-<!--                type: 'GET',-->
-<!--                dataType: 'json',-->
-<!--                success: function(user) {-->
-<!--                    populateUserForm(user);-->
-<!--                    currentUserId = user.id;-->
-<!--                    document.getElementById('userModalLabel').textContent = 'Edit User';-->
-<!--                    document.getElementById('passwordHint').classList.remove('hidden');-->
-<!--                    userModal.show();-->
-<!--                },-->
-<!--                error: function(xhr) {-->
-<!--                    showNotification('Error', 'Failed to load user details: ' + xhr.statusText, 'danger');-->
-<!--                }-->
-<!--            });-->
-<!--        }-->
-
-<!--        // Populate user form for editing-->
-<!--        function populateUserForm(user) {-->
-<!--            document.getElementById('userId').value = user.id;-->
-<!--            document.getElementById('username').value = user.username;-->
-<!--            document.getElementById('email').value = user.email;-->
-<!--            document.getElementById('firstName').value = user.first_name || '';-->
-<!--            document.getElementById('lastName').value = user.last_name || '';-->
-<!--            document.getElementById('role').value = user.role || 'user';-->
-<!--            document.getElementById('isActive').checked = user.is_active;-->
-<!--            document.getElementById('phoneNumber').value = user.phone_number || '';-->
-<!--            document.getElementById('address').value = user.address || '';-->
-<!--            document.getElementById('password').value = '';-->
-<!--            document.getElementById('confirmPassword').value = '';-->
-<!--        }-->
-
-<!--        // Show delete confirmation-->
-<!--        function showDeleteConfirmation(userId) {-->
-<!--            currentUserId = userId;-->
-<!--            confirmModal.show();-->
-<!--        }-->
-
-<!--        // Create new user-->
-<!--        function createUser(userData) {-->
-<!--            $.ajax({-->
-<!--                url: '/users/',-->
-<!--                type: 'POST',-->
-<!--                contentType: 'application/json',-->
-<!--                data: JSON.stringify(userData),-->
-<!--                headers: {-->
-<!--                    'X-CSRFToken': getCsrfToken()-->
-<!--                },-->
-<!--                success: function() {-->
-<!--                    userModal.hide();-->
-<!--                    showNotification('Success', 'User created successfully');-->
-<!--                    fetchUsers();-->
-<!--                },-->
-<!--                error: function(xhr) {-->
-<!--                    showNotification('Error', 'Failed to create user: ' + xhr.responseText, 'danger');-->
-<!--                }-->
-<!--            });-->
-<!--        }-->
-
-<!--        // Update existing user-->
-<!--        function updateUser(userId, userData) {-->
-<!--            $.ajax({-->
-<!--                url: `/users/${userId}/`,-->
-<!--                type: 'PUT',-->
-<!--                contentType: 'application/json',-->
-<!--                data: JSON.stringify(userData),-->
-<!--                headers: {-->
-<!--                    'X-CSRFToken': getCsrfToken()-->
-<!--                },-->
-<!--                success: function() {-->
-<!--                    userModal.hide();-->
-<!--                    showNotification('Success', 'User updated successfully');-->
-<!--                    fetchUsers();-->
-<!--                },-->
-<!--                error: function(xhr) {-->
-<!--                    showNotification('Error', 'Failed to update user: ' + xhr.responseText, 'danger');-->
-<!--                }-->
-<!--            });-->
-<!--        }-->
-
-<!--        // Delete user-->
-<!--        function deleteUser(userId) {-->
-<!--            $.ajax({-->
-<!--                url: `/users/${userId}/`,-->
-<!--                type: 'DELETE',-->
-<!--                headers: {-->
-<!--                    'X-CSRFToken': getCsrfToken()-->
-<!--                },-->
-<!--                success: function() {-->
-<!--                    confirmModal.hide();-->
-<!--                    showNotification('Success', 'User deleted successfully');-->
-<!--                    fetchUsers();-->
-<!--                },-->
-<!--                error: function(xhr) {-->
-<!--                    showNotification('Error', 'Failed to delete user: ' + xhr.statusText, 'danger');-->
-<!--                }-->
-<!--            });-->
-<!--        }-->
-
-<!--        // Gather form data-->
-<!--        function gatherFormData() {-->
-<!--            const userData = {-->
-<!--                username: document.getElementById('username').value,-->
-<!--                email: document.getElementById('email').value,-->
-<!--                first_name: document.getElementById('firstName').value,-->
-<!--                last_name: document.getElementById('lastName').value,-->
-<!--                role: document.getElementById('role').value,-->
-<!--                is_active: document.getElementById('isActive').checked,-->
-<!--                phone_number: document.getElementById('phoneNumber').value,-->
-<!--                address: document.getElementById('address').value-->
-<!--            };-->
-
-<!--            const password = document.getElementById('password').value;-->
-<!--            const confirmPassword = document.getElementById('confirmPassword').value;-->
-
-<!--            // Add password if provided-->
-<!--            if (password) {-->
-<!--                if (password !== confirmPassword) {-->
-<!--                    showNotification('Error', 'Passwords do not match', 'danger');-->
-<!--                    return null;-->
-<!--                }-->
-<!--                userData.password = password;-->
-<!--            }-->
-
-<!--            return userData;-->
-<!--        }-->
-
-<!--        // Initialize event listeners-->
-<!--        function initializeEventListeners() {-->
-<!--            // Add user button-->
-<!--            document.getElementById('addUserBtn').addEventListener('click', function() {-->
-<!--                resetUserForm();-->
-<!--                document.getElementById('userModalLabel').textContent = 'Add New User';-->
-<!--                document.getElementById('passwordHint').classList.add('hidden');-->
-<!--                userModal.show();-->
-<!--            });-->
-
-<!--            // Save user button-->
-<!--            document.getElementById('saveUserBtn').addEventListener('click', function() {-->
-<!--                const userData = gatherFormData();-->
-<!--                if (!userData) return;-->
-
-<!--                if (currentUserId) {-->
-<!--                    updateUser(currentUserId, userData);-->
-<!--                } else {-->
-<!--                    createUser(userData);-->
-<!--                }-->
-<!--            });-->
-
-<!--            // Confirm delete button-->
-<!--            document.getElementById('confirmDeleteBtn').addEventListener('click', function() {-->
-<!--                deleteUser(currentUserId);-->
-<!--            });-->
-
-<!--            // Form validation-->
-<!--            document.getElementById('userForm').addEventListener('submit', function(e) {-->
-<!--                e.preventDefault();-->
-<!--                document.getElementById('saveUserBtn').click();-->
-<!--            });-->
-<!--        }-->
-
-<!--        // Reset user form-->
-<!--        function resetUserForm() {-->
-<!--            document.getElementById('userForm').reset();-->
-<!--            document.getElementById('userId').value = '';-->
-<!--            currentUserId = null;-->
-<!--        }-->
-
-<!--        // Initialize the page-->
-<!--        function init() {-->
-<!--            fetchUsers();-->
-<!--            initializeEventListeners();-->
-<!--        }-->
-
-<!--        // Start the application-->
-<!--        $(document).ready(function() {-->
-<!--            init();-->
-<!--        });-->
-<!--    </script>-->
-<script>
-    // Global variables
-    let currentUserId = null;
-    const userModal = new bootstrap.Modal(document.getElementById('userModal'));
-    const confirmModal = new bootstrap.Modal(document.getElementById('confirmModal'));
-    const notificationToast = new bootstrap.Toast(document.getElementById('notificationToast'));
-
-    // Show notification
-    function showNotification(title, message, type = 'success') {
-        const toastTitle = document.getElementById('toastTitle');
-        const toastMessage = document.getElementById('toastMessage');
-        const toastElement = document.getElementById('notificationToast');
-
-        toastTitle.textContent = title;
-        toastMessage.textContent = message;
-
-        // Reset classes
-        toastElement.className = 'toast';
-        toastElement.classList.add(type === 'success' ? 'bg-success' : 'bg-danger', 'text-white');
-
-        notificationToast.show();
-    }
-
-    // Get CSRF token
-    function getCsrfToken() {
-        const cookieValue = document.cookie
-            .split('; ')
-            .find(row => row.startsWith('csrftoken='))
-            ?.split('=')[1];
-        return cookieValue;
-    }
-
-    // Fetch all users
-    function fetchUsers() {
-        $('#loadingIndicator').show();
-        $.ajax({
-            url: '/users/',
-            type: 'GET',
-            dataType: 'json',
-            success: function(data) {
-                renderUserTable(data);
-                $('#loadingIndicator').hide();
-            },
-            error: function(xhr) {
-                $('#loadingIndicator').hide();
-                showNotification('Error', 'Failed to load users: ' + xhr.statusText, 'danger');
-            }
-        });
-    }
-
-    // Render user table
-    function renderUserTable(users) {
-        const userTable = document.getElementById('userTable');
-        userTable.innerHTML = '';
-
-        users.forEach(user => {
-            const row = document.createElement('tr');
-            row.className = 'user-row';
-            row.innerHTML = `
-                <td>${user.id}</td>
-                <td>${user.username}</td>
-                <td>${user.email}</td>
-                <td>${user.first_name || ''}</td>
-                <td>${user.last_name || ''}</td>
-                <td>${user.role || 'N/A'}</td>
-                <td>
-                    <span class="badge ${user.is_active ? 'bg-success' : 'bg-secondary'}">
-                        ${user.is_active ? 'Active' : 'Inactive'}
-                    </span>
-                </td>
-                <td>
-                    <button class="btn btn-sm btn-primary edit-user" data-id="${user.id}">Edit</button>
-                    <button class="btn btn-sm btn-danger delete-user" data-id="${user.id}">Delete</button>
-                    <button class="btn btn-sm btn-success create-farm" data-id="${user.id}">Create Farm</button>
-                </td>
-            `;
-            userTable.appendChild(row);
-        });
-
-        // Add event listeners to buttons
-        document.querySelectorAll('.edit-user').forEach(button => {
-            button.addEventListener('click', function(e) {
-                e.stopPropagation();
-                const userId = this.getAttribute('data-id');
-                fetchUserDetails(userId);
+        // Fetch all users
+        function fetchUsers() {
+            $('#loadingIndicator').show();
+            $.ajax({
+                url: '/users/',
+                type: 'GET',
+                dataType: 'json',
+                success: function(data) {
+                    renderUserTable(data);
+                    $('#loadingIndicator').hide();
+                },
+                error: function(xhr) {
+                    $('#loadingIndicator').hide();
+                    showNotification('Error', 'Failed to load users: ' + xhr.statusText, 'danger');
+                }
             });
-        });
+        }
 
-        document.querySelectorAll('.delete-user').forEach(button => {
-            button.addEventListener('click', function(e) {
-                e.stopPropagation();
-                const userId = this.getAttribute('data-id');
-                showDeleteConfirmation(userId);
-            });
-        });
+        // Render user table
+       // Render user table
+// Render user table
+function renderUserTable(users) {
+    const userTable = document.getElementById('userTable');
+    userTable.innerHTML = '';
 
-        // Add event listener for "Create Farm" buttons
-        document.querySelectorAll('.create-farm').forEach(button => {
+    users.forEach(user => {
+        const row = document.createElement('tr');
+        row.className = 'user-row';
+        row.innerHTML = `
+            <td>${user.id}</td>
+            <td>${user.username}</td>
+            <td>${user.email}</td>
+            <td>${user.first_name || ''}</td>
+            <td>${user.last_name || ''}</td>
+            <td>${user.role || 'N/A'}</td>
+            <td>
+                <span class="badge ${user.is_active ? 'bg-success' : 'bg-secondary'}">
+                    ${user.is_active ? 'Active' : 'Inactive'}
+                </span>
+            </td>
+            <td>
+                <button class="btn btn-sm btn-primary edit-user" data-id="${user.id}">Edit</button>
+                <button class="btn btn-sm btn-danger delete-user" data-id="${user.id}">Delete</button>
+                <button class="btn btn-sm btn-success create-farm" data-id="${user.id}">Create Farm</button>
+            </td>
+        `;
+        userTable.appendChild(row);
+    });
+
+    // Add event listeners to buttons
+    document.querySelectorAll('.edit-user').forEach(button => {
+        button.addEventListener('click', function(e) {
+            e.stopPropagation();
+            const userId = this.getAttribute('data-id');
+            fetchUserDetails(userId);
+        });
+    });
+
+    document.querySelectorAll('.delete-user').forEach(button => {
+        button.addEventListener('click', function(e) {
+            e.stopPropagation();
+            const userId = this.getAttribute('data-id');
+            showDeleteConfirmation(userId);
+        });
+    });
+
+   document.querySelectorAll('.create-farm').forEach(button => {
     button.addEventListener('click', function(e) {
         e.stopPropagation();
+
         const userId = this.getAttribute('data-id');
-        window.location.href = `/create-farm/`;
+        if (!userId) {
+            console.error('User ID is missing or invalid.');
+            return;
+        }
+
+        localStorage.setItem('selectedUserId', userId);
+
+        // Get stored token
+        const token = localStorage.getItem("authToken");
+        console.log("Stored Token:", localStorage.getItem("authToken"));
+
+        if (!token) {
+            console.error("No auth token found. Please log in.");
+            return;
+        }
+
+        // Make an authenticated request
+        fetch("http://127.0.0.1:8000/farm/farmlist/", {
+            method: "GET",
+            headers: {
+                "Authorization": `Token ${token}`,
+                "Content-Type": "application/json",
+            },
+        })
+        .then(response => {
+            if (!response.ok) {
+                throw new Error(`HTTP error! Status: ${response.status}`);
+            }
+            return response.json();
+        })
+        .then(data => {
+            console.log("Farms loaded:", data);
+            window.location.href = `/farm/farm-html-CRUD/${userId}/`;
+        })
+        .catch(error => {
+            console.error("Error loading farms:", error);
+        });
     });
 });
 
-    // Fetch user details for editing
-    function fetchUserDetails(userId) {
-        $.ajax({
-            url: `/users/${userId}/`,
-            type: 'GET',
-            dataType: 'json',
-            success: function(user) {
-                populateUserForm(user);
-                currentUserId = user.id;
-                document.getElementById('userModalLabel').textContent = 'Edit User';
-                document.getElementById('passwordHint').classList.remove('hidden');
-                userModal.show();
-            },
-            error: function(xhr) {
-                showNotification('Error', 'Failed to load user details: ' + xhr.statusText, 'danger');
-            }
-        });
-    }
+}
 
-    // Populate user form for editing
-    function populateUserForm(user) {
-        document.getElementById('userId').value = user.id;
-        document.getElementById('username').value = user.username;
-        document.getElementById('email').value = user.email;
-        document.getElementById('firstName').value = user.first_name || '';
-        document.getElementById('lastName').value = user.last_name || '';
-        document.getElementById('role').value = user.role || 'user';
-        document.getElementById('isActive').checked = user.is_active;
-        document.getElementById('phoneNumber').value = user.phone_number || '';
-        document.getElementById('address').value = user.address || '';
-        document.getElementById('password').value = '';
-        document.getElementById('confirmPassword').value = '';
-    }
-
-    // Show delete confirmation
-    function showDeleteConfirmation(userId) {
-        currentUserId = userId;
-        confirmModal.show();
-    }
-
-    // Create new user
-    function createUser(userData) {
-        $.ajax({
-            url: '/users/',
-            type: 'POST',
-            contentType: 'application/json',
-            data: JSON.stringify(userData),
-            headers: {
-                'X-CSRFToken': getCsrfToken()
-            },
-            success: function() {
-                userModal.hide();
-                showNotification('Success', 'User created successfully');
-                fetchUsers();
-            },
-            error: function(xhr) {
-                showNotification('Error', 'Failed to create user: ' + xhr.responseText, 'danger');
-            }
-        });
-    }
-
-    // Update existing user
-    function updateUser(userId, userData) {
-        $.ajax({
-            url: `/users/${userId}/`,
-            type: 'PUT',
-            contentType: 'application/json',
-            data: JSON.stringify(userData),
-            headers: {
-                'X-CSRFToken': getCsrfToken()
-            },
-            success: function() {
-                userModal.hide();
-                showNotification('Success', 'User updated successfully');
-                fetchUsers();
-            },
-            error: function(xhr) {
-                showNotification('Error', 'Failed to update user: ' + xhr.responseText, 'danger');
-            }
-        });
-    }
-
-    // Delete user
-    function deleteUser(userId) {
-        $.ajax({
-            url: `/users/${userId}/`,
-            type: 'DELETE',
-            headers: {
-                'X-CSRFToken': getCsrfToken()
-            },
-            success: function() {
-                confirmModal.hide();
-                showNotification('Success', 'User deleted successfully');
-                fetchUsers();
-            },
-            error: function(xhr) {
-                showNotification('Error', 'Failed to delete user: ' + xhr.statusText, 'danger');
-            }
-        });
-    }
-
-    // Gather form data
-    function gatherFormData() {
-        const userData = {
-            username: document.getElementById('username').value,
-            email: document.getElementById('email').value,
-            first_name: document.getElementById('firstName').value,
-            last_name: document.getElementById('lastName').value,
-            role: document.getElementById('role').value,
-            is_active: document.getElementById('isActive').checked,
-            phone_number: document.getElementById('phoneNumber').value,
-            address: document.getElementById('address').value
-        };
-
-        const password = document.getElementById('password').value;
-        const confirmPassword = document.getElementById('confirmPassword').value;
-
-        // Add password if provided
-        if (password) {
-            if (password !== confirmPassword) {
-                showNotification('Error', 'Passwords do not match', 'danger');
-                return null;
-            }
-            userData.password = password;
+        // Fetch user details for editing
+        function fetchUserDetails(userId) {
+            $.ajax({
+                url: `/users/${userId}/`,
+                type: 'GET',
+                dataType: 'json',
+                success: function(user) {
+                    populateUserForm(user);
+                    currentUserId = user.id;
+                    document.getElementById('userModalLabel').textContent = 'Edit User';
+                    document.getElementById('passwordHint').classList.remove('hidden');
+                    userModal.show();
+                },
+                error: function(xhr) {
+                    showNotification('Error', 'Failed to load user details: ' + xhr.statusText, 'danger');
+                }
+            });
         }
 
-        return userData;
-    }
+        // Populate user form for editing
+        function populateUserForm(user) {
+            document.getElementById('userId').value = user.id;
+            document.getElementById('username').value = user.username;
+            document.getElementById('email').value = user.email;
+            document.getElementById('firstName').value = user.first_name || '';
+            document.getElementById('lastName').value = user.last_name || '';
+            document.getElementById('role').value = user.role || 'user';
+            document.getElementById('isActive').checked = user.is_active;
+            document.getElementById('phoneNumber').value = user.phone_number || '';
+            document.getElementById('address').value = user.address || '';
+            document.getElementById('password').value = '';
+            document.getElementById('confirmPassword').value = '';
+        }
 
-    // Initialize event listeners
-    function initializeEventListeners() {
-        // Add user button
-        document.getElementById('addUserBtn').addEventListener('click', function() {
-            resetUserForm();
-            document.getElementById('userModalLabel').textContent = 'Add New User';
-            document.getElementById('passwordHint').classList.add('hidden');
-            userModal.show();
-        });
+        // Show delete confirmation
+        function showDeleteConfirmation(userId) {
+            currentUserId = userId;
+            confirmModal.show();
+        }
 
-        // Save user button
-        document.getElementById('saveUserBtn').addEventListener('click', function() {
-            const userData = gatherFormData();
-            if (!userData) return;
+        // Create new user
+        function createUser(userData) {
+            $.ajax({
+                url: '/users/',
+                type: 'POST',
+                contentType: 'application/json',
+                data: JSON.stringify(userData),
+                headers: {
+                    'X-CSRFToken': getCsrfToken()
+                },
+                success: function() {
+                    userModal.hide();
+                    showNotification('Success', 'User created successfully');
+                    fetchUsers();
+                },
+                error: function(xhr) {
+                    showNotification('Error', 'Failed to create user: ' + xhr.responseText, 'danger');
+                }
+            });
+        }
 
-            if (currentUserId) {
-                updateUser(currentUserId, userData);
-            } else {
-                createUser(userData);
+        // Update existing user
+        function updateUser(userId, userData) {
+            $.ajax({
+                url: `/users/${userId}/`,
+                type: 'PUT',
+                contentType: 'application/json',
+                data: JSON.stringify(userData),
+                headers: {
+                    'X-CSRFToken': getCsrfToken()
+                },
+                success: function() {
+                    userModal.hide();
+                    showNotification('Success', 'User updated successfully');
+                    fetchUsers();
+                },
+                error: function(xhr) {
+                    showNotification('Error', 'Failed to update user: ' + xhr.responseText, 'danger');
+                }
+            });
+        }
+
+        // Delete user
+        function deleteUser(userId) {
+            $.ajax({
+                url: `/users/${userId}/`,
+                type: 'DELETE',
+                headers: {
+                    'X-CSRFToken': getCsrfToken()
+                },
+                success: function() {
+                    confirmModal.hide();
+                    showNotification('Success', 'User deleted successfully');
+                    fetchUsers();
+                },
+                error: function(xhr) {
+                    showNotification('Error', 'Failed to delete user: ' + xhr.statusText, 'danger');
+                }
+            });
+        }
+
+        // Gather form data
+        function gatherFormData() {
+            const userData = {
+                username: document.getElementById('username').value,
+                email: document.getElementById('email').value,
+                first_name: document.getElementById('firstName').value,
+                last_name: document.getElementById('lastName').value,
+                role: document.getElementById('role').value,
+                is_active: document.getElementById('isActive').checked,
+                phone_number: document.getElementById('phoneNumber').value,
+                address: document.getElementById('address').value
+            };
+
+            const password = document.getElementById('password').value;
+            const confirmPassword = document.getElementById('confirmPassword').value;
+
+            // Add password if provided
+            if (password) {
+                if (password !== confirmPassword) {
+                    showNotification('Error', 'Passwords do not match', 'danger');
+                    return null;
+                }
+                userData.password = password;
             }
+
+            return userData;
+        }
+
+        // Initialize event listeners
+        function initializeEventListeners() {
+            // Add user button
+            document.getElementById('addUserBtn').addEventListener('click', function() {
+                resetUserForm();
+                document.getElementById('userModalLabel').textContent = 'Add New User';
+                document.getElementById('passwordHint').classList.add('hidden');
+                userModal.show();
+            });
+
+            // Save user button
+            document.getElementById('saveUserBtn').addEventListener('click', function() {
+                const userData = gatherFormData();
+                if (!userData) return;
+
+                if (currentUserId) {
+                    updateUser(currentUserId, userData);
+                } else {
+                    createUser(userData);
+                }
+            });
+
+            // Confirm delete button
+            document.getElementById('confirmDeleteBtn').addEventListener('click', function() {
+                deleteUser(currentUserId);
+            });
+
+            // Form validation
+            document.getElementById('userForm').addEventListener('submit', function(e) {
+                e.preventDefault();
+                document.getElementById('saveUserBtn').click();
+            });
+        }
+
+        // Reset user form
+        function resetUserForm() {
+            document.getElementById('userForm').reset();
+            document.getElementById('userId').value = '';
+            currentUserId = null;
+        }
+
+        // Initialize the page
+        function init() {
+            fetchUsers();
+            initializeEventListeners();
+        }
+
+        // Start the application
+        $(document).ready(function() {
+            init();
         });
+    </script>
 
-        // Confirm delete button
-        document.getElementById('confirmDeleteBtn').addEventListener('click', function() {
-            deleteUser(currentUserId);
-        });
-
-        // Form validation
-        document.getElementById('userForm').addEventListener('submit', function(e) {
-            e.preventDefault();
-            document.getElementById('saveUserBtn').click();
-        });
-    }
-
-    // Reset user form
-    function resetUserForm() {
-        document.getElementById('userForm').reset();
-        document.getElementById('userId').value = '';
-        currentUserId = null;
-    }
-
-    // Initialize the page
-    function init() {
-        fetchUsers();
-        initializeEventListeners();
-    }
-
-    // Start the application
-    $(document).ready(function() {
-        init();
-    });
-</script>
 </body>
 </html>

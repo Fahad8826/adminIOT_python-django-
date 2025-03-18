@@ -19,10 +19,8 @@ class MotorSerializer(serializers.ModelSerializer):
 
 class FarmSerializer(serializers.ModelSerializer):
     motors = MotorSerializer(many=True, read_only=True)
-
     class Meta:
         model = Farm
         fields = '__all__'
 
 
-lds = '__all__'
