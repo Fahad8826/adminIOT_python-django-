@@ -99,7 +99,7 @@ DATABASES = {
         'USER': 'postgres',  # Default PostgreSQL user
         'PASSWORD': '123456',  # Set during PostgreSQL installation
         'HOST': 'localhost',  # Keep localhost for local development
-        'PORT': '5432',  # Default PostgreSQL port
+        # 'PORT': '5432',  # Default PostgreSQL port
     }
 }
 
