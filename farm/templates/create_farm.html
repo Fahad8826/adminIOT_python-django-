@@ -187,41 +187,41 @@
             });
         }
 
-        // Fetch farms and populate the table
-        function fetchFarms() {
-            const csrfToken = getCookie('csrftoken');
-            const adminToken = localStorage.getItem('adminToken');
+       // Fetch farms and populate the table
+function fetchFarms() {
+    const csrfToken = getCookie('csrftoken');
+    const adminToken = localStorage.getItem('adminToken');
 
-            $.ajax({
-                url: 'http://127.0.0.1:8000/farm/farms/',
-                type: 'GET',
-                headers: {
-                    'X-CSRFToken': csrfToken,
-                    'Authorization': 'Token ' + adminToken
-                },
-                success: function(response) {
-                    const farmTableBody = $('#farmTableBody');
-                    farmTableBody.empty();
-                    response.forEach(farm => {
-                        farmTableBody.append(`
-                            <tr>
-                                <td>${farm.name}</td>
-                                <td>${farm.location}</td>
-                                <td>${farm.size}</td>
-                                <td>${farm.owner.username || farm.owner.email}</td>
-                                <td>
-                                    <button class="btn btn-warning btn-action" onclick="openEditFarmPrompt(${farm.id})">Edit</button>
-                                    <button class="btn btn-danger btn-action" onclick="deleteFarm(${farm.id})">Delete</button>
-                                </td>
-                            </tr>
-                        `);
-                    });
-                },
-                error: function(xhr, status, error) {
-                    console.error('Error fetching farms:', error);
-                }
+    $.ajax({
+        url: 'http://127.0.0.1:8000/farm/farms/',
+        type: 'GET',
+        headers: {
+            'X-CSRFToken': csrfToken,
+            'Authorization': 'Token ' + adminToken
+        },
+        success: function(response) {
+            const farmTableBody = $('#farmTableBody');
+            farmTableBody.empty();
+            response.forEach(farm => {
+                farmTableBody.append(`
+                    <tr>
+                        <td>${farm.name}</td>
+                        <td>${farm.location}</td>
+                        <td>${farm.size}</td>
+                        <td>${farm.owner_details.username || farm.owner_details.email}</td>
+                        <td>
+                            <button class="btn btn-warning btn-action" onclick="openEditFarmPrompt(${farm.id})">Edit</button>
+                            <button class="btn btn-danger btn-action" onclick="deleteFarm(${farm.id})">Delete</button>
+                        </td>
+                    </tr>
+                `);
             });
+        },
+        error: function(xhr, status, error) {
+            console.error('Error fetching farms:', error);
         }
+    });
+}
 
         // Open Create Farm Modal
         function openCreateFarmPrompt() {
