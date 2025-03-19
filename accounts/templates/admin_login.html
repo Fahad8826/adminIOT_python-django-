@@ -1,3 +1,5 @@
+
+
 <!--&lt;!&ndash; templates/admin_login.html &ndash;&gt;-->
 <!--<!DOCTYPE html>-->
 <!--<html lang="en">-->
@@ -59,6 +61,8 @@
 <!--            text-align: center;-->
 <!--        }-->
 <!--    </style>-->
+<!--    &lt;!&ndash; Include jQuery &ndash;&gt;-->
+<!--    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>-->
 <!--</head>-->
 <!--<body>-->
 <!--    <div class="login-container">-->
@@ -66,153 +70,112 @@
 <!--        <div id="error-message" class="error-message"></div>-->
 <!--        <div class="form-group">-->
 <!--            <label for="email">Email:</label>-->
-<!--            <input type="email" id="email" value="admin@example.com" >-->
+<!--            <input type="email" id="email" value="admin@example.com">-->
 <!--        </div>-->
 <!--        <div class="form-group">-->
 <!--            <label for="password">Password:</label>-->
-<!--            <input type="password" id="password" value="admin123" >-->
+<!--            <input type="password" id="password" value="admin123">-->
 <!--        </div>-->
-<!--        <button onclick="loginAdmin()">Login</button>-->
+<!--        <button id="loginButton">Login</button>-->
 <!--    </div>-->
 
 <!--    <script>-->
-<!--        function loginAdmin() {-->
-<!--            const email = document.getElementById('email').value;-->
-<!--            const password = document.getElementById('password').value;-->
-<!--            const errorMessage = document.getElementById('error-message');-->
+<!--        $(document).ready(function() {-->
+<!--    $("#loginButton").click(function() {-->
+<!--        const email = $("#email").val();-->
+<!--        const password = $("#password").val();-->
+<!--        const errorMessage = $("#error-message");-->
 
-<!--            fetch('/api/admin/login/', {-->
-<!--                method: 'POST',-->
-<!--                headers: {-->
-<!--                    'Content-Type': 'application/json',-->
-<!--                },-->
-<!--                body: JSON.stringify({ email, password }),-->
-<!--            })-->
-<!--            .then(response => response.json())-->
-<!--            .then(data => {-->
-<!--                if (data.token) {-->
-<!--                    localStorage.setItem('adminToken', data.token);-->
-<!--                    window.location.href = 'admin-dashboard/';-->
+<!--        $.ajax({-->
+<!--            url: "/api/admin/login/",-->
+<!--            type: "POST",-->
+<!--            contentType: "application/json",-->
+<!--            data: JSON.stringify({ email: email, password: password }),-->
+<!--            success: function(response) {-->
+<!--                if (response.token) {-->
+<!--                    localStorage.setItem("authToken", response.token);-->
+<!--                    console.log("Token Stored Successfully:", response.token);-->
+<!--                    window.location.href = "admin-dashboard/";-->
 <!--                } else {-->
-<!--                    errorMessage.textContent = data.error || 'Login failed';-->
+<!--                    errorMessage.text(response.error || "Login failed");-->
 <!--                }-->
-<!--            })-->
-<!--            .catch(error => {-->
-<!--                errorMessage.textContent = 'An error occurred during login';-->
-<!--                console.error('Error:', error);-->
-<!--            });-->
-<!--        }-->
+<!--            },-->
+<!--            error: function(xhr, status, error) {-->
+<!--                errorMessage.text("An error occurred during login");-->
+<!--                console.error("Error:", error);-->
+<!--            }-->
+<!--        });-->
+<!--    });-->
+<!--});-->
 <!--    </script>-->
 <!--</body>-->
 <!--</html>-->
-
-<!-- templates/admin_login.html -->
 <!DOCTYPE html>
-<html lang="en">
+<html>
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Admin Login</title>
-    <style>
-        body {
-            font-family: Arial, sans-serif;
-            background-color: #f4f4f4;
-            margin: 0;
-            padding: 0;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            height: 100vh;
-        }
-        .login-container {
-            background-color: white;
-            padding: 20px;
-            border-radius: 5px;
-            box-shadow: 0 0 10px rgba(0,0,0,0.1);
-            width: 300px;
-        }
-        h2 {
-            text-align: center;
-            margin-bottom: 20px;
-        }
-        .form-group {
-            margin-bottom: 15px;
-        }
-        label {
-            display: block;
-            margin-bottom: 5px;
-        }
-        input {
-            width: 100%;
-            padding: 8px;
-            box-sizing: border-box;
-            border: 1px solid #ddd;
-            border-radius: 4px;
-        }
-        button {
-            width: 100%;
-            padding: 10px;
-            background-color: #4CAF50;
-            color: white;
-            border: none;
-            border-radius: 4px;
-            cursor: pointer;
-        }
-        button:hover {
-            background-color: #45a049;
-        }
-        .error-message {
-            color: red;
-            margin-top: 10px;
-            text-align: center;
-        }
-    </style>
-    <!-- Include jQuery -->
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-</head>
-<body>
-    <div class="login-container">
-        <h2>Admin Login</h2>
-        <div id="error-message" class="error-message"></div>
-        <div class="form-group">
-            <label for="email">Email:</label>
-            <input type="email" id="email" value="admin@example.com">
-        </div>
-        <div class="form-group">
-            <label for="password">Password:</label>
-            <input type="password" id="password" value="admin123">
-        </div>
-        <button id="loginButton">Login</button>
-    </div>
-
     <script>
         $(document).ready(function() {
-    $("#loginButton").click(function() {
-        const email = $("#email").val();
-        const password = $("#password").val();
-        const errorMessage = $("#error-message");
+            $('#login-form').submit(function(e) {
+                e.preventDefault();
 
-        $.ajax({
-            url: "/api/admin/login/",
-            type: "POST",
-            contentType: "application/json",
-            data: JSON.stringify({ email: email, password: password }),
-            success: function(response) {
-                if (response.token) {
-                    localStorage.setItem("authToken", response.token);
-                    console.log("Token Stored Successfully:", response.token);
-                    window.location.href = "admin-dashboard/";
-                } else {
-                    errorMessage.text(response.error || "Login failed");
+                const email = $('#email').val();
+                const password = $('#password').val();
+
+                $.ajax({
+                    url: '/api/admin/login/',
+                    type: 'POST',
+                    contentType: 'application/json',
+                    data: JSON.stringify({
+                        email: email,
+                        password: password
+                    }),
+                    headers: {
+                        'X-CSRFToken': getCookie('csrftoken')  // Get CSRF token from cookie
+                    },
+                    success: function(response) {
+                        // Store token in localStorage
+                        localStorage.setItem('adminToken', response.token);
+                        // Redirect to dashboard
+                        window.location.href = '/admin-dashboard/';
+                    },
+                    error: function(xhr) {
+                        alert('Login failed: ' + xhr.responseJSON.error);
+                    }
+                });
+            });
+
+            // Function to get CSRF token from cookies
+            function getCookie(name) {
+                let cookieValue = null;
+                if (document.cookie && document.cookie !== '') {
+                    const cookies = document.cookie.split(';');
+                    for (let i = 0; i < cookies.length; i++) {
+                        const cookie = cookies[i].trim();
+                        if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                            cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                            break;
+                        }
+                    }
                 }
-            },
-            error: function(xhr, status, error) {
-                errorMessage.text("An error occurred during login");
-                console.error("Error:", error);
+                return cookieValue;
             }
         });
-    });
-});
     </script>
+</head>
+<body>
+    <h1>Admin Login</h1>
+    <form id="login-form">
+        <div>
+            <label for="email">Email:</label>
+            <input type="email" id="email" required>
+        </div>
+        <div>
+            <label for="password">Password:</label>
+            <input type="password" id="password" required>
+        </div>
+        <button type="submit">Login</button>
+    </form>
 </body>
 </html>
