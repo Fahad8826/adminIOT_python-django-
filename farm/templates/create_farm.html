@@ -208,7 +208,7 @@
                                 <td>${farm.name}</td>
                                 <td>${farm.location}</td>
                                 <td>${farm.size}</td>
-                                <td>${farm.owner.name || farm.owner.email}</td>
+                                <td>${farm.owner.username || farm.owner.email}</td>
                                 <td>
                                     <button class="btn btn-warning btn-action" onclick="openEditFarmPrompt(${farm.id})">Edit</button>
                                     <button class="btn btn-danger btn-action" onclick="deleteFarm(${farm.id})">Delete</button>
