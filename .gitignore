@@ -1,0 +1,38 @@
+# Byte-compiled / optimized / DLL files
+__pycache__/
+*.py[cod]
+*$py.class
+
+# Virtual environment
+venv/
+env/
+*.egg-info/
+*.egg
+
+# Django-specific
+db.sqlite3
+db.sqlite3-journal
+media/
+staticfiles/
+*.log
+
+# VS Code settings
+.vscode/
+
+# PyCharm settings
+.idea/
+
+# Jupyter Notebook checkpoints
+.ipynb_checkpoints/
+
+# System-specific files
+.DS_Store
+Thumbs.db
+
+# Environment variables
+.env
+*.env
+
+# Migrations (optional, ignore if you don't want to track them)
+**/migrations/*.py
+!**/migrations/__init__.py

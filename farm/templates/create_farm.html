@@ -1,0 +1,719 @@
+<!--<!DOCTYPE html>-->
+<!--<html lang="en">-->
+<!--<head>-->
+<!--    <meta charset="UTF-8">-->
+<!--    <meta name="viewport" content="width=device-width, initial-scale=1.0">-->
+<!--    <title>Farm Management</title>-->
+<!--    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>-->
+<!--    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">-->
+<!--    <style>-->
+<!--        body {-->
+<!--            padding: 20px;-->
+<!--            background-color: #f8f9fa;-->
+<!--        }-->
+<!--        .farm-table {-->
+<!--            background: white;-->
+<!--            padding: 20px;-->
+<!--            border-radius: 8px;-->
+<!--            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);-->
+<!--        }-->
+<!--        .btn-action {-->
+<!--            margin: 0 5px;-->
+<!--        }-->
+<!--    </style>-->
+<!--</head>-->
+<!--<body>-->
+<!--    <div class="container">-->
+<!--        <h1 class="text-center mb-4">Farm Management</h1>-->
+
+<!--        &lt;!&ndash; Farm List Table &ndash;&gt;-->
+<!--        <div class="farm-table">-->
+<!--            <h2>Farm List</h2>-->
+<!--            <button class="btn btn-primary mb-3" onclick="openCreateFarmPrompt()">Create New Farm</button>-->
+<!--            <table class="table table-striped">-->
+<!--                <thead>-->
+<!--                    <tr>-->
+<!--                        <th>Name</th>-->
+<!--                        <th>Location</th>-->
+<!--                        <th>Size (acres)</th>-->
+<!--                        <th>Owner</th>-->
+<!--                        <th>Actions</th>-->
+<!--                    </tr>-->
+<!--                </thead>-->
+<!--                <tbody id="farmTableBody">-->
+<!--                    &lt;!&ndash; Farm rows will be populated dynamically &ndash;&gt;-->
+<!--                </tbody>-->
+<!--            </table>-->
+<!--        </div>-->
+
+<!--        &lt;!&ndash; Response Section &ndash;&gt;-->
+<!--        <h2>Response:</h2>-->
+<!--        <pre id="response"></pre>-->
+<!--    </div>-->
+
+<!--    &lt;!&ndash; Create Farm Modal &ndash;&gt;-->
+<!--    <div class="modal fade" id="createFarmModal" tabindex="-1" aria-labelledby="createFarmModalLabel" aria-hidden="true">-->
+<!--        <div class="modal-dialog">-->
+<!--            <div class="modal-content">-->
+<!--                <div class="modal-header">-->
+<!--                    <h5 class="modal-title" id="createFarmModalLabel">Create Farm</h5>-->
+<!--                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>-->
+<!--                </div>-->
+<!--                <div class="modal-body">-->
+<!--                    <form id="farmForm">-->
+<!--                        {% csrf_token %}-->
+<!--                        <div class="mb-3">-->
+<!--                            <label for="name" class="form-label">Farm Name:</label>-->
+<!--                            <input type="text" id="name" name="name" class="form-control" required>-->
+<!--                        </div>-->
+<!--                        <div class="mb-3">-->
+<!--                            <label for="location" class="form-label">Location:</label>-->
+<!--                            <input type="text" id="location" name="location" class="form-control" required>-->
+<!--                        </div>-->
+<!--                        <div class="mb-3">-->
+<!--                            <label for="size" class="form-label">Size (in acres):</label>-->
+<!--                            <input type="number" id="size" name="size" step="0.1" class="form-control" required>-->
+<!--                        </div>-->
+<!--                        <div class="mb-3">-->
+<!--                            <label for="description" class="form-label">Description:</label>-->
+<!--                            <textarea id="description" name="description" class="form-control" required></textarea>-->
+<!--                        </div>-->
+<!--                        <div class="mb-3">-->
+<!--                            <label for="owner" class="form-label">Owner:</label>-->
+<!--                            <select id="owner" name="owner" class="form-control" required>-->
+<!--                                <option value="">Select Owner</option>-->
+<!--                                &lt;!&ndash; Options will be populated dynamically &ndash;&gt;-->
+<!--                            </select>-->
+<!--                        </div>-->
+<!--                    </form>-->
+<!--                </div>-->
+<!--                <div class="modal-footer">-->
+<!--                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>-->
+<!--                    <button type="button" class="btn btn-primary" onclick="submitFarmForm()">Save Farm</button>-->
+<!--                </div>-->
+<!--            </div>-->
+<!--        </div>-->
+<!--    </div>-->
+
+<!--    &lt;!&ndash; Edit Farm Modal &ndash;&gt;-->
+<!--    <div class="modal fade" id="editFarmModal" tabindex="-1" aria-labelledby="editFarmModalLabel" aria-hidden="true">-->
+<!--        <div class="modal-dialog">-->
+<!--            <div class="modal-content">-->
+<!--                <div class="modal-header">-->
+<!--                    <h5 class="modal-title" id="editFarmModalLabel">Edit Farm</h5>-->
+<!--                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>-->
+<!--                </div>-->
+<!--                <div class="modal-body">-->
+<!--                    <form id="editFarmForm">-->
+<!--                        {% csrf_token %}-->
+<!--                        <div class="mb-3">-->
+<!--                            <label for="editName" class="form-label">Farm Name:</label>-->
+<!--                            <input type="text" id="editName" name="name" class="form-control" required>-->
+<!--                        </div>-->
+<!--                        <div class="mb-3">-->
+<!--                            <label for="editLocation" class="form-label">Location:</label>-->
+<!--                            <input type="text" id="editLocation" name="location" class="form-control" required>-->
+<!--                        </div>-->
+<!--                        <div class="mb-3">-->
+<!--                            <label for="editSize" class="form-label">Size (in acres):</label>-->
+<!--                            <input type="number" id="editSize" name="size" step="0.1" class="form-control" required>-->
+<!--                        </div>-->
+<!--                        <div class="mb-3">-->
+<!--                            <label for="editDescription" class="form-label">Description:</label>-->
+<!--                            <textarea id="editDescription" name="description" class="form-control" required></textarea>-->
+<!--                        </div>-->
+<!--                        <div class="mb-3">-->
+<!--                            <label for="editOwner" class="form-label">Owner:</label>-->
+<!--                            <select id="editOwner" name="owner" class="form-control" required>-->
+<!--                                <option value="">Select Owner</option>-->
+<!--                                &lt;!&ndash; Options will be populated dynamically &ndash;&gt;-->
+<!--                            </select>-->
+<!--                        </div>-->
+<!--                    </form>-->
+<!--                </div>-->
+<!--                <div class="modal-footer">-->
+<!--                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>-->
+<!--                    <button type="button" class="btn btn-primary" onclick="submitEditFarmForm()">Save Changes</button>-->
+<!--                </div>-->
+<!--            </div>-->
+<!--        </div>-->
+<!--    </div>-->
+
+<!--    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>-->
+<!--    <script>-->
+<!--        function getCookie(name) {-->
+<!--            let cookieValue = null;-->
+<!--            if (document.cookie && document.cookie !== '') {-->
+<!--                const cookies = document.cookie.split(';');-->
+<!--                for (let i = 0; i < cookies.length; i++) {-->
+<!--                    const cookie = cookies[i].trim();-->
+<!--                    if (cookie.substring(0, name.length + 1) === (name + '=')) {-->
+<!--                        cookieValue = decodeURIComponent(cookie.substring(name.length + 1));-->
+<!--                        break;-->
+<!--                    }-->
+<!--                }-->
+<!--            }-->
+<!--            return cookieValue;-->
+<!--        }-->
+
+<!--        // Fetch users with role = 'user' and populate the dropdown-->
+<!--        function fetchUsers() {-->
+<!--            const csrfToken = getCookie('csrftoken');-->
+<!--            const adminToken = localStorage.getItem('adminToken');-->
+
+<!--            $.ajax({-->
+<!--                url: 'http://127.0.0.1:8000/users/',-->
+<!--                type: 'GET',-->
+<!--                headers: {-->
+<!--                    'X-CSRFToken': csrfToken,-->
+<!--                    'Authorization': 'Token ' + adminToken-->
+<!--                },-->
+<!--                success: function(response) {-->
+<!--                    const users = response.filter(user => user.role === 'user');-->
+<!--                    const ownerDropdown = $('#owner');-->
+<!--                    const editOwnerDropdown = $('#editOwner');-->
+<!--                    ownerDropdown.empty();-->
+<!--                    editOwnerDropdown.empty();-->
+<!--                    ownerDropdown.append('<option value="">Select Owner</option>');-->
+<!--                    editOwnerDropdown.append('<option value="">Select Owner</option>');-->
+<!--                    users.forEach(user => {-->
+<!--                        ownerDropdown.append(`<option value="${user.id}">${user.name || user.email}</option>`);-->
+<!--                        editOwnerDropdown.append(`<option value="${user.id}">${user.name || user.email}</option>`);-->
+<!--                    });-->
+<!--                },-->
+<!--                error: function(xhr, status, error) {-->
+<!--                    console.error('Error fetching users:', error);-->
+<!--                }-->
+<!--            });-->
+<!--        }-->
+
+<!--       // Fetch farms and populate the table-->
+<!--function fetchFarms() {-->
+<!--    const csrfToken = getCookie('csrftoken');-->
+<!--    const adminToken = localStorage.getItem('adminToken');-->
+
+<!--    $.ajax({-->
+<!--        url: 'http://127.0.0.1:8000/farm/farms/',-->
+<!--        type: 'GET',-->
+<!--        headers: {-->
+<!--            'X-CSRFToken': csrfToken,-->
+<!--            'Authorization': 'Token ' + adminToken-->
+<!--        },-->
+<!--        success: function(response) {-->
+<!--            const farmTableBody = $('#farmTableBody');-->
+<!--            farmTableBody.empty();-->
+<!--            response.forEach(farm => {-->
+<!--                farmTableBody.append(`-->
+<!--                    <tr>-->
+<!--                        <td>${farm.name}</td>-->
+<!--                        <td>${farm.location}</td>-->
+<!--                        <td>${farm.size}</td>-->
+<!--                        <td>${farm.owner_details.username || farm.owner_details.email}</td>-->
+<!--                        <td>-->
+<!--                            <button class="btn btn-warning btn-action" onclick="openEditFarmPrompt(${farm.id})">Edit</button>-->
+<!--                            <button class="btn btn-danger btn-action" onclick="deleteFarm(${farm.id})">Delete</button>-->
+<!--                        </td>-->
+<!--                    </tr>-->
+<!--                `);-->
+<!--            });-->
+<!--        },-->
+<!--        error: function(xhr, status, error) {-->
+<!--            console.error('Error fetching farms:', error);-->
+<!--        }-->
+<!--    });-->
+<!--}-->
+
+<!--        // Open Create Farm Modal-->
+<!--        function openCreateFarmPrompt() {-->
+<!--            fetchUsers();  // Refresh the owner dropdown-->
+<!--            $('#createFarmModal').modal('show');-->
+<!--        }-->
+
+<!--        // Submit Create Farm Form-->
+<!--        function submitFarmForm() {-->
+<!--            const formData = {-->
+<!--                name: $('#name').val(),-->
+<!--                location: $('#location').val(),-->
+<!--                size: parseFloat($('#size').val()),-->
+<!--                description: $('#description').val(),-->
+<!--                owner: parseInt($('#owner').val())-->
+<!--            };-->
+
+<!--            const csrfToken = getCookie('csrftoken');-->
+<!--            const adminToken = localStorage.getItem('adminToken');-->
+
+<!--            $.ajax({-->
+<!--                url: 'http://127.0.0.1:8000/farm/farms/',-->
+<!--                type: 'POST',-->
+<!--                contentType: 'application/json',-->
+<!--                headers: {-->
+<!--                    'X-CSRFToken': csrfToken,-->
+<!--                    'Authorization': 'Token ' + adminToken-->
+<!--                },-->
+<!--                data: JSON.stringify(formData),-->
+<!--                success: function(response) {-->
+<!--                    $('#response').text(JSON.stringify(response, null, 2));-->
+<!--                    $('#createFarmModal').modal('hide');-->
+<!--                    fetchFarms();  // Refresh the farm list-->
+<!--                },-->
+<!--                error: function(xhr, status, error) {-->
+<!--                    $('#response').text('Error: ' + error);-->
+<!--                }-->
+<!--            });-->
+<!--        }-->
+
+<!--        // Open Edit Farm Modal-->
+<!--        function openEditFarmPrompt(farmId) {-->
+<!--            fetchUsers();  // Refresh the owner dropdown-->
+<!--            const csrfToken = getCookie('csrftoken');-->
+<!--            const adminToken = localStorage.getItem('adminToken');-->
+
+<!--            $.ajax({-->
+<!--                url: `http://127.0.0.1:8000/farm/farms/${farmId}/`,-->
+<!--                type: 'GET',-->
+<!--                headers: {-->
+<!--                    'X-CSRFToken': csrfToken,-->
+<!--                    'Authorization': 'Token ' + adminToken-->
+<!--                },-->
+<!--                success: function(response) {-->
+<!--                    $('#editName').val(response.name);-->
+<!--                    $('#editLocation').val(response.location);-->
+<!--                    $('#editSize').val(response.size);-->
+<!--                    $('#editDescription').val(response.description);-->
+<!--                    $('#editOwner').val(response.owner.id);-->
+<!--                    $('#editFarmModal').data('farmId', farmId);-->
+<!--                    $('#editFarmModal').modal('show');-->
+<!--                },-->
+<!--                error: function(xhr, status, error) {-->
+<!--                    console.error('Error fetching farm details:', error);-->
+<!--                }-->
+<!--            });-->
+<!--        }-->
+
+<!--        // Submit Edit Farm Form-->
+<!--        function submitEditFarmForm() {-->
+<!--            const farmId = $('#editFarmModal').data('farmId');-->
+<!--            const formData = {-->
+<!--                name: $('#editName').val(),-->
+<!--                location: $('#editLocation').val(),-->
+<!--                size: parseFloat($('#editSize').val()),-->
+<!--                description: $('#editDescription').val(),-->
+<!--                owner: parseInt($('#editOwner').val())-->
+<!--            };-->
+
+<!--            const csrfToken = getCookie('csrftoken');-->
+<!--            const adminToken = localStorage.getItem('adminToken');-->
+
+<!--            $.ajax({-->
+<!--                url: `http://127.0.0.1:8000/farm/farms/${farmId}/`,-->
+<!--                type: 'PUT',-->
+<!--                contentType: 'application/json',-->
+<!--                headers: {-->
+<!--                    'X-CSRFToken': csrfToken,-->
+<!--                    'Authorization': 'Token ' + adminToken-->
+<!--                },-->
+<!--                data: JSON.stringify(formData),-->
+<!--                success: function(response) {-->
+<!--                    $('#response').text(JSON.stringify(response, null, 2));-->
+<!--                    $('#editFarmModal').modal('hide');-->
+<!--                    fetchFarms();  // Refresh the farm list-->
+<!--                },-->
+<!--                error: function(xhr, status, error) {-->
+<!--                    $('#response').text('Error: ' + error);-->
+<!--                }-->
+<!--            });-->
+<!--        }-->
+
+<!--        // Delete a farm-->
+<!--        function deleteFarm(farmId) {-->
+<!--            const csrfToken = getCookie('csrftoken');-->
+<!--            const adminToken = localStorage.getItem('adminToken');-->
+
+<!--            if (confirm('Are you sure you want to delete this farm?')) {-->
+<!--                $.ajax({-->
+<!--                    url: `http://127.0.0.1:8000/farm/farms/${farmId}/`,-->
+<!--                    type: 'DELETE',-->
+<!--                    headers: {-->
+<!--                        'X-CSRFToken': csrfToken,-->
+<!--                        'Authorization': 'Token ' + adminToken-->
+<!--                    },-->
+<!--                    success: function(response) {-->
+<!--                        $('#response').text('Farm deleted successfully');-->
+<!--                        fetchFarms();  // Refresh the farm list-->
+<!--                    },-->
+<!--                    error: function(xhr, status, error) {-->
+<!--                        $('#response').text('Error: ' + error);-->
+<!--                    }-->
+<!--                });-->
+<!--            }-->
+<!--        }-->
+
+<!--        // Initialize the page-->
+<!--        $(document).ready(function() {-->
+<!--            fetchUsers();-->
+<!--            fetchFarms();-->
+<!--        });-->
+<!--    </script>-->
+<!--</body>-->
+<!--</html>-->
+
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Farm Management</title>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        body {
+            padding: 20px;
+            background-color: #f8f9fa;
+        }
+        .farm-table {
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+        .btn-action {
+            margin: 0 5px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1 class="text-center mb-4">Farm Management</h1>
+
+        <!-- Create Farm Button -->
+        <button class="btn btn-primary mb-3" onclick="openCreateFarmModal()">Create New Farm</button>
+
+        <!-- Farm List Table -->
+        <div class="farm-table">
+            <h2>Farm List</h2>
+            <table class="table table-striped">
+                <thead>
+                    <tr>
+                        <th>Name</th>
+                        <th>Location</th>
+                        <th>Size (acres)</th>
+                        <th>Owner</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody id="farmTableBody">
+                    <!-- Farm rows will be populated dynamically -->
+                </tbody>
+            </table>
+        </div>
+
+        <!-- Response Section -->
+        <h2>Response:</h2>
+        <pre id="response"></pre>
+    </div>
+
+    <!-- Create Farm Modal -->
+    <div class="modal fade" id="createFarmModal" tabindex="-1" aria-labelledby="createFarmModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="createFarmModalLabel">Create Farm</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <form id="farmForm">
+                        {% csrf_token %}
+                        <div class="mb-3">
+                            <label for="name" class="form-label">Farm Name:</label>
+                            <input type="text" id="name" name="name" class="form-control" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="location" class="form-label">Location:</label>
+                            <input type="text" id="location" name="location" class="form-control" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="size" class="form-label">Size (in acres):</label>
+                            <input type="number" id="size" name="size" step="0.1" class="form-control" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="description" class="form-label">Description:</label>
+                            <textarea id="description" name="description" class="form-control" required></textarea>
+                        </div>
+                        <div class="mb-3">
+                            <label for="owner" class="form-label">Owner:</label>
+                            <select id="owner" name="owner" class="form-control" required>
+                                <option value="">Select Owner</option>
+                                <!-- Options will be populated dynamically -->
+                            </select>
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                    <button type="button" class="btn btn-primary" onclick="submitFarmForm()">Save Farm</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Edit Farm Modal -->
+    <div class="modal fade" id="editFarmModal" tabindex="-1" aria-labelledby="editFarmModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="editFarmModalLabel">Edit Farm</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <form id="editFarmForm">
+                        {% csrf_token %}
+                        <div class="mb-3">
+                            <label for="editName" class="form-label">Farm Name:</label>
+                            <input type="text" id="editName" name="name" class="form-control" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="editLocation" class="form-label">Location:</label>
+                            <input type="text" id="editLocation" name="location" class="form-control" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="editSize" class="form-label">Size (in acres):</label>
+                            <input type="number" id="editSize" name="size" step="0.1" class="form-control" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="editDescription" class="form-label">Description:</label>
+                            <textarea id="editDescription" name="description" class="form-control" required></textarea>
+                        </div>
+                        <div class="mb-3">
+                            <label for="editOwner" class="form-label">Owner:</label>
+                            <select id="editOwner" name="owner" class="form-control" required>
+                                <option value="">Select Owner</option>
+                                <!-- Options will be populated dynamically -->
+                            </select>
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                    <button type="button" class="btn btn-primary" onclick="submitEditFarmForm()">Save Changes</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        function getCookie(name) {
+            let cookieValue = null;
+            if (document.cookie && document.cookie !== '') {
+                const cookies = document.cookie.split(';');
+                for (let i = 0; i < cookies.length; i++) {
+                    const cookie = cookies[i].trim();
+                    if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                        cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                        break;
+                    }
+                }
+            }
+            return cookieValue;
+        }
+
+        // Fetch users and populate the dropdown
+        function fetchUsers() {
+            const csrfToken = getCookie('csrftoken');
+            const adminToken = localStorage.getItem('adminToken');
+
+            $.ajax({
+                url: 'http://127.0.0.1:8000/users/',  // Replace with your API endpoint
+                type: 'GET',
+                headers: {
+                    'X-CSRFToken': csrfToken,
+                    'Authorization': 'Token ' + adminToken
+                },
+                success: function(response) {
+                    const ownerDropdown = $('#owner');
+                    const editOwnerDropdown = $('#editOwner');
+                    ownerDropdown.empty();
+                    editOwnerDropdown.empty();
+                    ownerDropdown.append('<option value="">Select Owner</option>');
+                    editOwnerDropdown.append('<option value="">Select Owner</option>');
+                    response.forEach(user => {
+                        ownerDropdown.append(`<option value="${user.id}">${user.email || user.username}</option>`);
+                        editOwnerDropdown.append(`<option value="${user.id}">${user.email || user.username}</option>`);
+                    });
+                },
+                error: function(xhr, status, error) {
+                    console.error('Error fetching users:', error);
+                }
+            });
+        }
+
+        // Fetch farms and populate the table
+        function fetchFarms() {
+            const csrfToken = getCookie('csrftoken');
+            const adminToken = localStorage.getItem('adminToken');
+
+            $.ajax({
+                url: 'http://127.0.0.1:8000/farm/farms/',
+                type: 'GET',
+                headers: {
+                    'X-CSRFToken': csrfToken,
+                    'Authorization': 'Token ' + adminToken
+                },
+                success: function(response) {
+                    const farmTableBody = $('#farmTableBody');
+                    farmTableBody.empty();
+                    response.forEach(farm => {
+                        farmTableBody.append(`
+                            <tr>
+                                <td>${farm.name}</td>
+                                <td>${farm.location}</td>
+                                <td>${farm.size}</td>
+                                <td>${farm.owner_details ? farm.owner_details.email || farm.owner_details.username : 'N/A'}</td>
+                                <td>
+                                    <button class="btn btn-warning btn-action" onclick="openEditFarmModal(${farm.id})">Edit</button>
+                                    <button class="btn btn-danger btn-action" onclick="deleteFarm(${farm.id})">Delete</button>
+                                </td>
+                            </tr>
+                        `);
+                    });
+                },
+                error: function(xhr, status, error) {
+                    console.error('Error fetching farms:', error);
+                }
+            });
+        }
+
+        // Open Create Farm Modal
+        function openCreateFarmModal() {
+            fetchUsers();  // Refresh the owner dropdown
+            $('#createFarmModal').modal('show');
+        }
+
+        // Submit Create Farm Form
+        function submitFarmForm() {
+            const formData = {
+                name: $('#name').val(),
+                location: $('#location').val(),
+                size: parseFloat($('#size').val()),
+                description: $('#description').val(),
+                owner: parseInt($('#owner').val())
+            };
+
+            const csrfToken = getCookie('csrftoken');
+            const adminToken = localStorage.getItem('adminToken');
+
+            $.ajax({
+                url: 'http://127.0.0.1:8000/farm/farms/',
+                type: 'POST',
+                contentType: 'application/json',
+                headers: {
+                    'X-CSRFToken': csrfToken,
+                    'Authorization': 'Token ' + adminToken
+                },
+                data: JSON.stringify(formData),
+                success: function(response) {
+                    $('#response').text(JSON.stringify(response, null, 2));
+                    $('#createFarmModal').modal('hide');
+                    fetchFarms();  // Refresh the farm list
+                },
+                error: function(xhr, status, error) {
+                    $('#response').text('Error: ' + error);
+                }
+            });
+        }
+
+        // Open Edit Farm Modal
+        function openEditFarmModal(farmId) {
+            fetchUsers();  // Refresh the owner dropdown
+            const csrfToken = getCookie('csrftoken');
+            const adminToken = localStorage.getItem('adminToken');
+
+            $.ajax({
+                url: `http://127.0.0.1:8000/farm/farms/${farmId}/`,
+                type: 'GET',
+                headers: {
+                    'X-CSRFToken': csrfToken,
+                    'Authorization': 'Token ' + adminToken
+                },
+                success: function(response) {
+                    $('#editName').val(response.name);
+                    $('#editLocation').val(response.location);
+                    $('#editSize').val(response.size);
+                    $('#editDescription').val(response.description);
+                    $('#editOwner').val(response.owner);
+                    $('#editFarmModal').data('farmId', farmId);
+                    $('#editFarmModal').modal('show');
+                },
+                error: function(xhr, status, error) {
+                    console.error('Error fetching farm details:', error);
+                }
+            });
+        }
+
+        // Submit Edit Farm Form
+        function submitEditFarmForm() {
+            const farmId = $('#editFarmModal').data('farmId');
+            const formData = {
+                name: $('#editName').val(),
+                location: $('#editLocation').val(),
+                size: parseFloat($('#editSize').val()),
+                description: $('#editDescription').val(),
+                owner: parseInt($('#editOwner').val())
+            };
+
+            const csrfToken = getCookie('csrftoken');
+            const adminToken = localStorage.getItem('adminToken');
+
+            $.ajax({
+                url: `http://127.0.0.1:8000/farm/farms/${farmId}/`,
+                type: 'PUT',
+                contentType: 'application/json',
+                headers: {
+                    'X-CSRFToken': csrfToken,
+                    'Authorization': 'Token ' + adminToken
+                },
+                data: JSON.stringify(formData),
+                success: function(response) {
+                    $('#response').text(JSON.stringify(response, null, 2));
+                    $('#editFarmModal').modal('hide');
+                    fetchFarms();  // Refresh the farm list
+                },
+                error: function(xhr, status, error) {
+                    $('#response').text('Error: ' + error);
+                }
+            });
+        }
+
+        // Delete a farm
+        function deleteFarm(farmId) {
+            const csrfToken = getCookie('csrftoken');
+            const adminToken = localStorage.getItem('adminToken');
+
+            if (confirm('Are you sure you want to delete this farm?')) {
+                $.ajax({
+                    url: `http://127.0.0.1:8000/farm/farms/${farmId}/`,
+                    type: 'DELETE',
+                    headers: {
+                        'X-CSRFToken': csrfToken,
+                        'Authorization': 'Token ' + adminToken
+                    },
+                    success: function(response) {
+                        $('#response').text('Farm deleted successfully');
+                        fetchFarms();  // Refresh the farm list
+                    },
+                    error: function(xhr, status, error) {
+                        $('#response').text('Error: ' + error);
+                    }
+                });
+            }
+        }
+
+        // Initialize the page
+        $(document).ready(function() {
+            fetchUsers();
+            fetchFarms();
+        });
+    </script>
+</body>
+</html>
